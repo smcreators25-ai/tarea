@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rescue Park — V5</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+<header class="top">
+  <div class="brand"><div class="brand-mark">RP</div><div><div class="kicker">INGENIERÍA DE SOFTWARE I · PROTOTIPO ACADÉMICO</div><h1>Asistente de Emergencias del Parque</h1></div></div>
+  <div class="top-actions"><span class="status-dot"></span> Operativo
+<button id="presentationBtn" class="presentation-cta">▶ MODO PRESENTACIÓN</button></div>
+</header>
+
+<main>
+<section class="hero">
+  <div><span class="section-tag">SIMULACIÓN INTERACTIVA</span><h2>¿Qué haría el robot ante una emergencia?</h2><p>La demostración permite que el visitante tome decisiones durante la atención, mientras el robot responde mediante voz y adapta el protocolo.</p></div>
+  <div class="hero-note"><b>Escenario</b><span>Parque público · Zona recreativa</span><b class="scenario-label">Caso</b><span id="heroScenario">Caída</span></div>
+</section>
+
+<div class="grid">
+<section class="map-card">
+  <div class="presentationControls"><button id="presentationReset">↻ Reiniciar</button><button id="presentationExit">Salir</button></div>
+  <div class="card-head"><div><span class="muted">MAPA DEL PARQUE</span><h3 id="missionTitle">Patrullaje preventivo</h3></div><span class="pill" id="pill">EN ESPERA</span></div>
+  <div class="map" id="map">
+    <div class="zone zone-play">Área de juegos</div><div class="zone zone-court">Cancha</div><div class="zone zone-lake">Lago</div><div class="zone zone-garden">Jardín</div>
+    <div class="road r1"></div><div class="road r2"></div><div class="road r3"></div><div class="cross c1"></div><div class="cross c2"></div>
+    <div class="tree tr1"></div><div class="tree tr2"></div><div class="tree tr3"></div><div class="tree tr4"></div><div class="tree tr5"></div><div class="tree tr6"></div>
+    <div class="bench bn1"></div><div class="bench bn2"></div>
+    <div class="route-label">RUTA DEL ROBOT</div>
+    <svg class="route-svg" viewBox="0 0 1000 560" preserveAspectRatio="none"><path id="routePath" d="M180 378 C345 370, 515 320, 665 300 S770 276, 815 276"/></svg>
+    <div class="incident" id="incident"><div class="incident-ring"></div><div class="person-icon">●</div><span>Persona</span></div>
+    <div class="robot" id="robot"><div class="lidar"></div><div class="robot-head"><span class="camera"></span></div><div class="robot-chassis"><div class="display">RP</div><div class="drawer d1"></div><div class="drawer d2"></div></div><div class="wheel left"></div><div class="wheel right"></div></div>
+    <div class="ambulance" id="ambulance">AMBULANCIA</div><div class="map-gps" id="mapGps">GPS · Esperando ubicación</div>
+  </div>
+  <div class="presentationOverlay">
+    <div id="presentationStatus" class="presentationStatus">LISTO</div>
+    <div id="presentationSpeaker" class="presentationSpeaker">ROBOT</div>
+    <div id="presentationDialogue" class="presentationDialogue">El robot está patrullando el parque.</div>
+    <div id="presentationChoices" class="presentationChoices"></div>
+  </div>
+  <div class="map-footer"><div class="legend"><span><i class="robot-dot"></i> Robot</span><span><i class="incident-dot"></i> Incidente</span><span><i class="route-dot"></i> Ruta</span></div><div><button id="startBtn" class="primary">Iniciar simulación</button><button id="resetBtn">Reiniciar</button></div></div>
+</section>
+
+<aside class="right">
+<section class="card"><div class="card-title">ESTADO</div>
+<div class="state-line"><span>Robot</span><strong id="robotState">Patrullando</strong></div><div class="state-line"><span>Sensores</span><strong class="ok">Activos</strong></div><div class="state-line"><span>GPS</span><strong class="ok">Activo</strong></div><div class="state-line"><span>IA asistencial</span><strong class="ok">Disponible</strong></div></section>
+
+<section class="card"><div class="card-title">TIPO DE INCIDENTE</div><select id="scenario"><option value="caida">Caída</option><option value="sangrado">Sangrado</option><option value="fractura">Posible fractura</option><option value="desmayo">Desmayo</option><option value="grave">Emergencia médica grave</option></select><p class="small">El escenario modifica el diálogo y la respuesta del sistema.</p></section>
+
+<section class="card chat-card"><div class="card-title">CONVERSACIÓN EN TIEMPO REAL</div><div class="chat" id="chat"><div class="chat-msg bot">El sistema está listo. Inicie una simulación.</div></div><div id="actions" class="actions"></div><div class="voice-line"><span id="voiceStatus">🔊 Voz lista</span><button id="voiceToggle">Voz: ON</button></div></section>
+
+<section class="card"><div class="card-title">SECUENCIA</div><ol class="timeline"><li id="step1" class="current"><b>01</b><span>Detectar</span></li><li id="step2"><b>02</b><span>Asignar robot</span></li><li id="step3"><b>03</b><span>Desplazar</span></li><li id="step4"><b>04</b><span>Conversar y asistir</span></li><li id="step5"><b>05</b><span>Escalar</span></li></ol></section>
+</aside>
+</div>
+<section class="bottom-grid"><div class="feature"><b>Primeros auxilios</b><span>Materiales básicos y orientación paso a paso.</span></div><div class="feature"><b>Accesibilidad</b><span>Orientación por voz y rutas adaptadas.</span></div><div class="feature"><b>Decisión humana</b><span>La persona responde al robot; el sistema adapta el siguiente paso.</span></div></section>
+</main>
+<footer>Prototipo conceptual para demostración académica · No es un dispositivo médico real.</footer>
+</div>
+<script src="script.js"></script>
+</body></html>
