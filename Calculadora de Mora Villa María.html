@@ -1,0 +1,275 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Calculadora de Mora Villa María</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: una hoja de cálculo de contador — controles arriba, luego el cálculo línea por línea como asiento, luego la tabla de referencia */
+:root {
+  --bg: #f3f6f4;
+  --surface: #ffffff;
+  --ink: #17241f;
+  --muted: #5b6b64;
+  --line: #d5ddd9;
+  --accent: #0f6b55;
+  --accent-soft: #e2f0eb;
+  --warn: #9a3b1c;
+  --warn-soft: #f8e7df;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-num: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1613; --surface: #17211d; --ink: #e4ece8; --muted: #93a39c; --line: #2a3832;
+    --accent: #4cc3a2; --accent-soft: #173a30; --warn: #f0a07f; --warn-soft: #3a2219;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1613; --surface: #17211d; --ink: #e4ece8; --muted: #93a39c; --line: #2a3832;
+  --accent: #4cc3a2; --accent-soft: #173a30; --warn: #f0a07f; --warn-soft: #3a2219;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 48px;
+}
+.wrap { max-width: 860px; margin: 0 auto; display: grid; gap: 28px; }
+header { display: grid; gap: 6px; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+h1 { font-family: var(--font-display); font-size: clamp(26px, 5vw, 34px); line-height: 1.15; margin: 0; text-wrap: balance; font-weight: 700; }
+h2 { font-size: 19px; margin: 0; text-wrap: balance; }
+.lead { color: var(--muted); max-width: 62ch; margin: 0; }
+.formula {
+  font-family: var(--font-num); font-size: 14px; background: var(--accent-soft); color: var(--ink);
+  padding: 12px 14px; border-radius: 8px; overflow-x: auto; white-space: nowrap;
+}
+section { display: grid; gap: 16px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 18px; }
+.controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+.field { display: grid; gap: 6px; min-width: 0; }
+label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+input[type=number] {
+  width: 100%; font-family: var(--font-num); font-size: 17px; padding: 10px 12px; border: 1px solid var(--line);
+  border-radius: 8px; background: var(--bg); color: var(--ink);
+}
+input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stepper { display: flex; gap: 6px; }
+.stepper input { text-align: center; }
+.stepper button {
+  flex: 0 0 44px; font-size: 20px; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  border-radius: 8px; cursor: pointer;
+}
+.stepper button:hover { border-color: var(--accent); color: var(--accent); }
+.check { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); text-transform: none; letter-spacing: 0; font-weight: 500; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--accent); }
+.presets { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.presets span { font-size: 13px; color: var(--muted); }
+.chip {
+  font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink); cursor: pointer;
+}
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+
+.ledger { display: grid; gap: 0; }
+.row {
+  display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: baseline;
+  padding: 12px 0; border-bottom: 1px dashed var(--line);
+}
+.row:last-child { border-bottom: 0; }
+.n { font-family: var(--font-num); font-size: 13px; color: var(--accent); font-weight: 600; }
+.desc { min-width: 0; }
+.desc b { display: block; font-weight: 600; }
+.desc small { color: var(--muted); font-family: var(--font-num); font-size: 13px; overflow-wrap: anywhere; }
+.amt { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 16px; text-align: right; white-space: nowrap; }
+.total { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  border-top: 2px solid var(--ink); padding-top: 14px; }
+.total .label { font-weight: 700; font-size: 16px; }
+.total .big { font-family: var(--font-num); font-size: 28px; font-weight: 600; color: var(--accent); }
+.note { font-size: 13px; color: var(--muted); margin: 0; }
+
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 520px; font-variant-numeric: tabular-nums; }
+th, td { padding: 9px 14px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; background: var(--bg); }
+td { font-family: var(--font-num); font-size: 14px; }
+tr:last-child td { border-bottom: 0; }
+tr.sel td { background: var(--accent-soft); font-weight: 600; }
+
+.neg { color: var(--warn); }
+.alert { background: var(--warn-soft); color: var(--ink); border-radius: 8px; padding: 10px 14px; font-size: 14px; }
+.alert b { color: var(--warn); }
+footer { font-size: 13px; color: var(--muted); }
+@media (max-width: 480px) {
+  .panel { padding: 16px; }
+  .row { grid-template-columns: 22px 1fr; }
+  .amt { grid-column: 2; text-align: left; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Inversiones Villa María · Prueba de fórmulas</div>
+    <h1>Calculadora de mora</h1>
+    <p class="lead">Cambie la cuota, los meses de atraso y la tasa para revisar que la mora se calcule como usted indicó. Cada paso del cálculo se muestra abajo.</p>
+    <div class="formula">Mora = (meses × cuota) × tasa anual ÷ 12 × meses</div>
+  </header>
+
+  <section aria-labelledby="t1">
+    <h2 id="t1">1. Cálculo de la mora</h2>
+    <div class="panel">
+      <div class="controls">
+        <div class="field">
+          <label for="cuota">Cuota mensual ($)</label>
+          <input type="number" id="cuota" value="500" min="0" step="0.01">
+        </div>
+        <div class="field">
+          <label for="meses">Meses de atraso</label>
+          <div class="stepper">
+            <button type="button" id="menos" aria-label="Quitar un mes">−</button>
+            <input type="number" id="meses" value="3" min="0" max="60" step="1">
+            <button type="button" id="mas" aria-label="Agregar un mes">+</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="tasa">Tasa moratoria anual (%)</label>
+          <input type="number" id="tasa" value="5" min="0" step="0.01">
+        </div>
+        <div class="field">
+          <label>IVA sobre la mora</label>
+          <label class="check" for="iva"><input type="checkbox" id="iva" checked> Sumar 13% de IVA</label>
+        </div>
+      </div>
+      <div class="presets">
+        <span>Probar:</span>
+        <button type="button" class="chip" data-c="500" data-m="3" data-t="3">Ejemplo del contador (3 × $500 al 3%)</button>
+        <button type="button" class="chip" data-c="500" data-m="1" data-t="5">1 mes de $500</button>
+        <button type="button" class="chip" data-c="797.28" data-m="8" data-t="5">Cliente D-28: 8 meses</button>
+      </div>
+
+      <div class="ledger" id="ledger"></div>
+
+      <div class="total">
+        <span class="label" id="totalLabel">Mora total a cobrar</span>
+        <span class="big" id="totalMora">$0.00</span>
+      </div>
+      <p class="note">La mora y su IVA se redondean a centavos, igual que en la hoja Pagos (columnas N y O).</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="t2">
+    <h2 id="t2">2. Tabla de referencia por meses de atraso</h2>
+    <p class="note" id="tablaNota"></p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Meses</th><th>Monto atrasado</th><th>Mora</th><th>IVA 13%</th><th>Mora + IVA</th></tr></thead>
+        <tbody id="tabla"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="t3">
+    <h2 id="t3">3. Cómo se reparte el pago</h2>
+    <p class="lead">El cliente paga un monto, y el sistema descuenta en este orden: interés del mes (1% del saldo, IVA incluido), mora y su IVA. Lo que queda va a capital. Si no alcanza, el faltante se suma al saldo.</p>
+    <div class="panel">
+      <div class="controls">
+        <div class="field">
+          <label for="saldo">Saldo anterior ($)</label>
+          <input type="number" id="saldo" value="20000" min="0" step="0.01">
+        </div>
+        <div class="field">
+          <label for="pago">Monto que paga el cliente ($)</label>
+          <input type="number" id="pago" value="500" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="ledger" id="reparto"></div>
+      <div class="total">
+        <span class="label">Saldo nuevo</span>
+        <span class="big" id="saldoNuevo">$0.00</span>
+      </div>
+      <div class="alert" id="alerta" hidden></div>
+      <p class="note">Usa la misma cuota, meses y tasa de la sección 1. Interés = saldo × 1% ÷ 1.13 y su IVA = interés × 13%, como en las columnas E y D de la hoja Pagos.</p>
+    </div>
+  </section>
+
+  <footer>Página de prueba: no registra pagos ni modifica la hoja de cálculo.</footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const r2 = n => Math.round((n + Number.EPSILON) * 100) / 100;
+const fmt = n => (n < 0 ? "−$" : "$") + Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const num = id => { const v = parseFloat($(id).value); return isNaN(v) ? 0 : v; };
+
+function mora(cuota, meses, tasaPct) {
+  const atrasado = meses * cuota;
+  const anual = atrasado * tasaPct / 100;
+  const mensual = anual / 12;
+  const m = r2(mensual * meses);
+  return { atrasado, anual, mensual, mora: m, iva: r2(m * 0.13) };
+}
+
+function fila(n, titulo, detalle, monto, clase) {
+  return `<div class="row"><span class="n">${n}</span><div class="desc"><b>${titulo}</b><small>${detalle}</small></div><span class="amt ${clase || ""}">${monto}</span></div>`;
+}
+
+function render() {
+  const cuota = num("cuota"), meses = Math.max(0, Math.round(num("meses"))), tasa = num("tasa"), conIva = $("iva").checked;
+  const c = mora(cuota, meses, tasa);
+  const totalMora = conIva ? r2(c.mora + c.iva) : c.mora;
+
+  $("ledger").innerHTML =
+    fila("1", "Sumar lo atrasado", `${meses} meses × ${fmt(cuota)}`, fmt(c.atrasado)) +
+    fila("2", "Aplicar la tasa anual", `${fmt(c.atrasado)} × ${tasa}%  (mora si fuera un año completo)`, fmt(c.anual)) +
+    fila("3", "Dividir entre 12", `${fmt(c.anual)} ÷ 12  (mora de un mes)`, fmt(c.mensual)) +
+    fila("4", "Multiplicar por los meses de atraso", `${fmt(c.mensual)} × ${meses} meses`, fmt(c.mora)) +
+    (conIva ? fila("5", "IVA de la mora", `${fmt(c.mora)} × 13%`, fmt(c.iva)) : "");
+  $("totalLabel").textContent = conIva ? "Mora total con IVA" : "Mora total (sin IVA)";
+  $("totalMora").textContent = fmt(totalMora);
+
+  // Tabla 1–12 meses
+  $("tablaNota").textContent = `Cuota de ${fmt(cuota)} con tasa de ${tasa}% anual.`;
+  let filas = "";
+  for (let m = 1; m <= 12; m++) {
+    const t = mora(cuota, m, tasa);
+    filas += `<tr class="${m === meses ? "sel" : ""}"><td>${m} ${m === 1 ? "mes" : "meses"}</td><td>${fmt(t.atrasado)}</td><td>${fmt(t.mora)}</td><td>${fmt(t.iva)}</td><td>${fmt(r2(t.mora + t.iva))}</td></tr>`;
+  }
+  $("tabla").innerHTML = filas;
+
+  // Reparto del pago
+  const saldo = num("saldo"), pago = num("pago");
+  const interes = saldo * 0.01 / 1.13, ivaInt = interes * 0.13;
+  const ivaMora = conIva ? c.iva : 0;
+  const capital = pago - interes - ivaInt - c.mora - ivaMora;
+  const nuevo = saldo - capital;
+  $("reparto").innerHTML =
+    fila("", "Monto pagado", "", fmt(pago)) +
+    fila("−", "Interés del mes", `${fmt(saldo)} × 1% ÷ 1.13`, fmt(interes)) +
+    fila("−", "IVA del interés", `${fmt(interes)} × 13%`, fmt(ivaInt)) +
+    fila("−", "Mora", `${meses} meses en atraso`, fmt(c.mora)) +
+    (conIva ? fila("−", "IVA de la mora", `${fmt(c.mora)} × 13%`, fmt(ivaMora)) : "") +
+    fila("=", "Abono a capital", capital < 0 ? "No alcanzó: este faltante se suma a la deuda" : "", fmt(capital), capital < 0 ? "neg" : "");
+  $("saldoNuevo").textContent = fmt(nuevo);
+  const alerta = $("alerta");
+  if (capital < 0) {
+    alerta.hidden = false;
+    alerta.innerHTML = `<b>El pago no cubre interés y mora.</b> Faltan ${fmt(-capital)}, que se suman al saldo: ${fmt(saldo)} + ${fmt(-capital)} = ${fmt(nuevo)}.`;
+  } else alerta.hidden = true;
+}
+
+["cuota", "meses", "tasa", "iva", "saldo", "pago"].forEach(id => $(id).addEventListener("input", render));
+$("menos").addEventListener("click", () => { $("meses").value = Math.max(0, num("meses") - 1); render(); });
+$("mas").addEventListener("click", () => { $("meses").value = Math.min(60, num("meses") + 1); render(); });
+document.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+  $("cuota").value = b.dataset.c; $("meses").value = b.dataset.m; $("tasa").value = b.dataset.t; render();
+}));
+render();
+</script>
+
+</body></html>
